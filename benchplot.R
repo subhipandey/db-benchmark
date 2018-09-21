@@ -4,6 +4,7 @@
 
 groupby.code = list(
   "sum v1 by id1" = c(
+    "dask"="DF.groupby(['id1']).agg({'v1':'sum'})",
     "data.table"="DT[, .(v1=sum(v1)), keyby=id1]",
     "dplyr"="DF %>% group_by(id1) %>% summarise(sum(v1))",
     "pandas"="DF.groupby(['id1']).agg({'v1':'sum'})",
@@ -11,6 +12,7 @@ groupby.code = list(
     "spark"="spark.sql('select sum(v1) as v1 from x group by id1')"
     ),
   "sum v1 by id1:id2" = c(
+    "dask"="DF.groupby(['id1','id2']).agg({'v1':'sum'})",
     "data.table"="DT[, .(v1=sum(v1)), keyby=.(id1, id2)]",
     "dplyr"="DF %>% group_by(id1,id2) %>% summarise(sum(v1))",
     "pandas"="DF.groupby(['id1','id2']).agg({'v1':'sum'})",
@@ -18,6 +20,7 @@ groupby.code = list(
     "spark"="spark.sql('select sum(v1) as v1 from x group by id1, id2')"
     ),
   "sum v1 mean v3 by id3" = c(
+    "dask"="DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
     "data.table"="DT[, .(v1=sum(v1), v3=mean(v3)), keyby=id3]",
     "dplyr"="DF %>% group_by(id3) %>% summarise(sum(v1), mean(v3))",
     "pandas"="DF.groupby(['id3']).agg({'v1':'sum', 'v3':'mean'})",
@@ -25,6 +28,7 @@ groupby.code = list(
     "spark"="spark.sql('select sum(v1) as v1, mean(v3) as v3 from x group by id3')"
     ),
   "mean v1:v3 by id4" = c(
+    "dask"="DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
     "data.table"="DT[, lapply(.SD, mean), keyby=id4, .SDcols=v1:v3]",
     "dplyr"="DF %>% group_by(id4) %>% summarise_each(funs(mean), vars=7:9)",
     "pandas"="DF.groupby(['id4']).agg({'v1':'mean', 'v2':'mean', 'v3':'mean'})",
@@ -32,6 +36,7 @@ groupby.code = list(
     "spark"="spark.sql('select mean(v1) as v1, mean(v2) as v2, mean(v3) as v3 from x group by id4')"
     ),
   "sum v1:v3 by id6" = c(
+    "dask"="DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
     "data.table"="DT[, lapply(.SD, sum), keyby=id6, .SDcols=v1:v3]",
     "dplyr"="DF %>% group_by(id6) %>% summarise_each(funs(sum), vars=7:9)",
     "pandas"="DF.groupby(['id6']).agg({'v1':'sum', 'v2':'sum', 'v3':'sum'})",
@@ -74,13 +79,13 @@ benchplot = function(.nrow=Inf, task="groupby", timings, code, prev=0) {
   if (exceptions) {
     # h2oai/datatable#1082 grouping by multiple cols not yet implemented, reset time_sec tot NA, impute out_rows and out_cols
     timings[solution=="pydatatable" & question=="sum v1 by id1:id2", time_sec:=NA_real_]
-    fix_missing = timings[solution=="data.table" & question=="sum v1 by id1:id2", .(out_rows, out_cols)]
+    fix_missing = timings[solution=="dplyr" & question=="sum v1 by id1:id2", .(out_rows, out_cols)]
     timings[solution=="pydatatable" & question=="sum v1 by id1:id2", c("out_rows","out_cols") := fix_missing]
     
     # pandas 1e9 killed on 125GB machine due to not enough memory
     if (timings[solution=="pandas" & in_rows==1e9, uniqueN(question)*uniqueN(run)] < nquestions*nruns) {
       pandasi = timings[solution=="pandas" & in_rows==1e9, which=TRUE] # there might be some results, so we need to filter them out
-      fix_pandas = timings[solution=="data.table" & in_rows==1e9
+      fix_pandas = timings[solution=="dplyr" & in_rows==1e9
                            ][, time_sec:=NA_real_
                              ][, solution:="pandas"
                                ][, version:=pandas_version
