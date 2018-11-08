@@ -8,6 +8,7 @@ if [[ "$RUN_TASKS" =~ "groupby" ]]; then
   do
     eval $line
     ./juliadf/groupby-juliadf.jl || true
+    date +'%s'
   done < ./loop-groupby-data.env
   Rscript ./log-task-solution.R groupby juliadf 1
 fi

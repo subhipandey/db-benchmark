@@ -32,7 +32,7 @@ print("grouping...\n");
 #   does not retain names
 # thus we use `by ... DataFrame`, if it is possible to improve that please report
 # see #30 and xiaodaigh/FastGroupBy.jl#7
-
+println("before question 1"); run(`date +'%s'`);
 question = "sum v1 by id1"; #1
 GC.gc();
 t_start = time_ns();
@@ -128,7 +128,7 @@ chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 chkt = (time_ns() - t_start)/1.0e9;
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
 ANS = 0;
-
+println("before question 5"); run(`date +'%s'`);
 question = "sum v1:v3 by id6" #5
 GC.gc();
 t_start = time_ns();
@@ -142,15 +142,19 @@ chkt = (time_ns() - t_start)/1.0e9;
 write_log(1, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
 ANS = 0;
 GC.gc();
+println("question 5 run 2: after run=1, before ANS=by()"); run(`date +'%s'`);
 t_start = time_ns();
 ANS = by(x, :id6) do df; DataFrame(v1 = sum(df.v1), v2 = sum(df.v2), v3 = sum(df.v3)); end;
 println(size(ANS));
 t = (time_ns() - t_start)/1.0e9;
 m = memory_usage();
+println("question 5 run 2: after ANS=by(), before chkt"); run(`date +'%s'`);
 t_start = time_ns();
 chk = [sum(ANS.v1), sum(ANS.v2), sum(ANS.v3)];
 chkt = (time_ns() - t_start)/1.0e9;
+println("question 5 run 2: after chkt, before write_log"); run(`date +'%s'`);
 write_log(2, task, data_name, in_rows, question, size(ANS, 1), size(ANS, 2), solution, ver, git, fun, t, m, cache, make_chk(chk), chkt);
+println("question 5 run 2: after write_log, before ANS=0"); run(`date +'%s'`);
 ANS = 0;
-
+println("question 5 run 2: after ANS=0, before exit"); run(`date +'%s'`);
 exit();
