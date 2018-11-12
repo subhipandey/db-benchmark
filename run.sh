@@ -28,11 +28,11 @@ $DO_UPGRADE && ./spark/init-spark.sh
 ./init-setup-iteration.R
 
 #source do-solutions.env
-DO_ALL=true
+DO_ALL=false
 DO_DASK=$DO_ALL
 DO_DATATABLE=$DO_ALL
 DO_DPLYR=$DO_ALL
-DO_JULIADF=$DO_ALL
+DO_JULIADF=true
 DO_MODIN=false
 DO_PANDAS=$DO_ALL
 DO_PYDATATABLE=$DO_ALL

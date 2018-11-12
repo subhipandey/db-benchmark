@@ -20,10 +20,10 @@ src_grp = ENV["SRC_GRP_LOCAL"];
 data_name = basename(src_grp);
 println(string("loading dataset ", data_name))
 
-x = CSV.read(data_name, categorical=true);
+x = CSV.read(data_name, categorical=false);
 in_rows = size(x, 1);
 println(in_rows);
-
+exit();
 print("grouping...\n");
 
 #ANS = aggregate(x[[:id1, :v1]], :id1, sum);
