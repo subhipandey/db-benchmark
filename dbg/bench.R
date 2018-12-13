@@ -29,7 +29,7 @@ l[["4_2"]] = system.time( DT[, lapply(.SD, mean), keyby=id4, .SDcols=7:9] )[["el
 l[["5_1"]] = system.time( DT[, lapply(.SD, sum), keyby=id6, .SDcols=7:9] )[["elapsed"]]
 l[["5_2"]] = system.time( DT[, lapply(.SD, sum), keyby=id6, .SDcols=7:9] )[["elapsed"]]
 
-d = rbindlist(lapply(strsplit(names(l), "_", fixed=TRUE), as.list))[, .(env=Sys.getenv("DBG_ENV", NA_character_), t=timestamp, n=N, k=K, q=V1, r=V2, s=round(unlist(l), 3))]
+d = rbindlist(lapply(strsplit(names(l), "_", fixed=TRUE), as.list))[, .(machine=Sys.info()[["nodename"]], env=Sys.getenv("DBG_ENV", NA_character_), ts=timestamp, n=N, k=K, q=V1, r=V2, s=round(unlist(l), 3))]
 fwrite(d, "dbg.csv", append=TRUE)
 
 q("no")
