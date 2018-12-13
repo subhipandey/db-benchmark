@@ -3,7 +3,7 @@
 require(data.table)
 N=1e7; K=100
 timestamp = as.integer(Sys.time())
-if (interactive()) Sys.setenv("DBG_ENV" = "repl")
+if (interactive()) Sys.setenv("DBG_ENV" = "R")
 set.seed(1)
 DT <- data.table(
   id1 = sample(sprintf("id%03d",1:K), N, TRUE),      # large groups (char)
@@ -16,7 +16,6 @@ DT <- data.table(
   v2 =  sample(5, N, TRUE),                          # int in range [1,5]
   v3 =  sample(round(runif(100,max=100),4), N, TRUE) # numeric e.g. 23.5749
 )
-#cat("GB =", round(sum(gc()[,2])/1024, 3), "\n")
 l = list()
 l[["1_1"]] = system.time( DT[, sum(v1), keyby=id1] )[["elapsed"]]
 l[["1_2"]] = system.time( DT[, sum(v1), keyby=id1] )[["elapsed"]]
